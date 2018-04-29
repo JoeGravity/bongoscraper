@@ -40,19 +40,19 @@ app.get("/scrape", function(req, res) {
     var $ = cheerio.load(response.data);
 
     // Now, we grab every h3 within an article tag, and do the following:
-    $(".xg_module_body").each(function(i, element) {
+    $("h3").each(function(i, element) {
       // Save an empty result object
       var result = {};
       // Add the text and href of every link, and save them as properties of the result object
       result.title = $(this)
-        .children("h3 a")
+        .children("a")
         .text();
       result.link = $(this)
-        .children("h3 a")
+        .children("a")
         .attr("href");
-      result.summary = $(this)
-        .children(".postbody")
-        .attr("p");
+      // result.summary = $(this)
+      //   .children(".postbody")
+      //   .attr("p");
 
       // Create a new Article using the `result` object built from scraping
       db.Article.create(result)
