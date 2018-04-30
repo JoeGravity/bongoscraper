@@ -31,16 +31,15 @@ mongoose.connect("mongodb://localhost/week18Populater");
 
 // Routes
 
-// A GET route for scraping the echoJS website
+// A GET route for scraping the bongo website
 app.get("/scrape", function(req, res) {
   // First, we grab the body of the html with request
   axios.get("http://bongo.rhino3d.com/profiles/blog/list").then(function(response) {
     // Then, we load that into cheerio and save it to $ for a shorthand selector
     // console.log(res);
     var $ = cheerio.load(response.data);
-
     // Now, we grab every h3 within an article tag, and do the following:
-    $("h3").each(function(i, element) {
+    $("h3, .postbody").each(function(i, element) {
       // Save an empty result object
       var result = {};
       // Add the text and href of every link, and save them as properties of the result object
@@ -50,9 +49,9 @@ app.get("/scrape", function(req, res) {
       result.link = $(this)
         .children("a")
         .attr("href");
-      // result.summary = $(this)
-      //   .children(".postbody")
-      //   .attr("p");
+      result.summary = $(this)
+        .children("p")
+        .text();
 
       // Create a new Article using the `result` object built from scraping
       db.Article.create(result)
@@ -120,19 +119,6 @@ app.post("/articles/:id", function(req, res) {
       res.json(err);
     });
 });
-
-// Start the server
-
-// const server = http.createServer((req,res)=>{
-//   res.setHeader('Content-Type', 'text/html');
-//   res.setHeader('X-Foo', 'bar');
-//   res.writeHead(200, { 'Content-Type': 'text/plain' });
-//   res.end('MehdiFilban solved this problem\nYour Header is set NOW\nGOOD LUCK...');
-// }).listen(port,()=>{
-//   console.log('your app is started');
-// });
-
-
 
 app.listen(PORT, function() {
   console.log("App running on port " + PORT + "!");
