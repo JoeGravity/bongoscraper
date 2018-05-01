@@ -27,7 +27,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
 // Connect to the Mongo DB
-mongoose.connect("mongodb://localhost/week18Populater");
+mongoose.connect("mongodb://localhost/bongodb");
 
 // Routes
 
@@ -39,7 +39,7 @@ app.get("/scrape", function (req, res) {
     // console.log(res);
     var $ = cheerio.load(response.data);
     // Now, we grab every h3 within an article tag, and do the following:
-    $("xg_module_body h3, .postbody").each(function (i, element) {
+    $("h3").each(function (i, element) {
       // Save an empty result object
       var result = {};
       // Add the text and href of every link, and save them as properties of the result object
@@ -53,7 +53,6 @@ app.get("/scrape", function (req, res) {
         .children("p")
         .text();
 
-      if (result.title !== "continue") {
         // Create a new Article using the `result` object built from scraping
         db.Article.create(result)
           .then(function (dbArticle) {
@@ -64,7 +63,6 @@ app.get("/scrape", function (req, res) {
             // If an error occurred, send it to the client
             return res.json(err);
           });
-      }
     });
 
     // If we were able to successfully scrape and save an Article, send a message to the client
