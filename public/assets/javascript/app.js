@@ -4,26 +4,24 @@ $.getJSON("/articles", function (data) {
   for (var i = 0; i < data.length; i++) {
     // Display the apropos information on the page
     $("#articles").append(
-      "<p data-id='" +
+      "<div><p class='entry' data-id='" +
       data[i]._id + "'><strong>" + data[i].title +
-      "</strong><br /><i>" + data[i].link);
+      "</strong><br /><i>" + data[i].link + "</i></p>");
+
     if (data[i].note) {
-      $("#articles").append("</i><h5>SEE NOTE</h5>");
-    }else {
-      $("#articles").append("</i></p>");
-        }
+      $("#articles").append("</i></p><h5 class='entry' data-id=" + data[i]._id + ">SEE NOTE</h5>");
+    }
+    $("#articles").append("</div>");
   }
 });
 
-
-  
-
 // Whenever someone clicks a p tag
-$(document).on("click", "p, h5", function () {
+$(document).on("click", ".entry", function () {
   // Empty the notes from the note section
   $("#notes").empty();
   // Save the id from the p tag
   var thisId = $(this).attr("data-id");
+  console.log("Got here", thisId)
 
   // Now make an ajax call for the Article
   $.ajax({
